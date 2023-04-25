@@ -1,0 +1,7 @@
+azure_api_type: azure
+azure_api_base: "https://openai-paas.openai.azure.com/"
+azure_api_version: "2023-03-15-preview"
+azure_model_map:
+    fast_llm_model_deployment_id: "gpt35"
+    smart_llm_model_deployment_id: "gpt4" 
+    embedding_model_deployment_id: "embedding-ada2"
