@@ -120,7 +120,11 @@ def execute_command(
         # non-file is given, return instructions "Input should be a python
         # filepath, write your code to file and try again
         elif command_name == "do_nothing":
-            return f"Error: No action performed. Reason: {arguments['reason']}"
+            return (
+                    f"Error: No action performed. Reason: {arguments['reason']}"
+                    "You are not allowed to do nothing. You must take an action."
+                    "Review the tasks you've been given and choose an action that suits the task at hand."
+                )
         elif command_name == "task_complete":
             shutdown()
         else:

@@ -11,6 +11,7 @@ from autogpt.speech import say_text
 from autogpt.spinner import Spinner
 from autogpt.utils import clean_input
 from autogpt.workspace import Workspace
+import pickle
 
 
 class Agent:
@@ -64,6 +65,8 @@ class Agent:
         self.system_prompt = system_prompt
         self.triggering_prompt = triggering_prompt
         self.workspace = Workspace(workspace_directory, cfg.restrict_to_workspace)
+        self.active_model = cfg.mega_llm_model
+        self.active_token_limit = cfg.mega_token_limit
 
     def start_interaction_loop(self):
         # Interaction Loop
@@ -94,8 +97,9 @@ class Agent:
                     self.triggering_prompt,
                     self.full_message_history,
                     self.memory,
-                    cfg.fast_token_limit,
-                )  # TODO: This hardcodes the model to use GPT3.5. Make this an argument
+                    self.active_token_limit,
+                    self.active_model
+                )  
 
             assistant_reply_json = fix_json_using_multiple_techniques(assistant_reply)
             for plugin in cfg.plugins:
@@ -131,7 +135,7 @@ class Agent:
                 )
                 print(
                     "Enter 'y' to authorise command, 'y -N' to run N continuous commands, 's' to run self-feedback commands"
-                    "'n' to exit program, or enter feedback for "
+                    "'n' to exit program, fast/smart/mega to change model, or enter feedback for "
                     f"{self.ai_name}...",
                     flush=True,
                 )
@@ -162,6 +166,21 @@ class Agent:
                         else:
                             user_input = self_feedback_resp
                         break
+                    elif console_input.lower().strip() == "fast":
+                        self.active_model = cfg.fast_llm_model
+                        self.active_token_limit = cfg.fast_token_limit
+                        print("Changed to fast model.")
+                        continue
+                    elif console_input.lower().strip() == "smart":
+                        self.active_model = cfg.fast_llm_model
+                        self.active_token_limit = cfg.fast_token_limit
+                        print("Changed to smart model.")
+                        continue
+                    elif console_input.lower().strip() == "mega":
+                        self.active_model = cfg.mega_llm_model
+                        self.active_token_limit = cfg.mega_token_limit
+                        print("Changed to mega model.")
+                        continue
                     elif console_input.lower().strip() == "":
                         print("Invalid input format.")
                         continue
@@ -255,6 +274,10 @@ class Agent:
                     logger.typewriter_log(
                         "SYSTEM: ", Fore.YELLOW, "Unable to execute command"
                     )
+                
+                # Write full message history to a file to allow resumption
+                with open(f"{self.workspace.root}/full_message_history.pkl","wb") as f:
+                    pickle.dump(self.full_message_history, f)
 
     def _resolve_pathlike_command_args(self, command_args):
         if "directory" in command_args and command_args["directory"] in {"", "/"}:

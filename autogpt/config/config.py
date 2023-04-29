@@ -31,8 +31,10 @@ class Config(metaclass=Singleton):
         self.ai_settings_file = os.getenv("AI_SETTINGS_FILE", "ai_settings.yaml")
         self.fast_llm_model = os.getenv("FAST_LLM_MODEL", "gpt-3.5-turbo")
         self.smart_llm_model = os.getenv("SMART_LLM_MODEL", "gpt-4")
+        self.mega_llm_model = os.getenv("MEGA_LLM_MODEL", "gpt-4-32k")
         self.fast_token_limit = int(os.getenv("FAST_TOKEN_LIMIT", 4000))
         self.smart_token_limit = int(os.getenv("SMART_TOKEN_LIMIT", 8000))
+        self.mega_token_limit = os.getenv("MEGA_TOKEN_LIMIT", 32000)
         self.browse_chunk_max_length = int(os.getenv("BROWSE_CHUNK_MAX_LENGTH", 3000))
         self.browse_spacy_language_model = os.getenv(
             "BROWSE_SPACY_LANGUAGE_MODEL", "en_core_web_sm"
@@ -154,6 +156,10 @@ class Config(metaclass=Singleton):
         elif model == self.smart_llm_model:
             return self.azure_model_to_deployment_id_map[
                 "smart_llm_model_deployment_id"
+            ]  # type: ignore
+        elif model == self.mega_llm_model:
+            return self.azure_model_to_deployment_id_map[
+                "mega_llm_model_deployment_id"
             ]  # type: ignore
         elif model == "text-embedding-ada-002":
             return self.azure_model_to_deployment_id_map[

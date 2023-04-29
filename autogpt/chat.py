@@ -53,7 +53,7 @@ def generate_context(prompt, relevant_memory, full_message_history, model):
 
 # TODO: Change debug from hardcode to argument
 def chat_with_ai(
-    agent, prompt, user_input, full_message_history, permanent_memory, token_limit
+    agent, prompt, user_input, full_message_history, permanent_memory, token_limit, model
 ):
     """Interact with the OpenAI API, sending the prompt, user input, message history,
     and permanent memory."""
@@ -75,11 +75,11 @@ def chat_with_ai(
             Returns:
             str: The AI's response.
             """
-            model = cfg.fast_llm_model  # TODO: Change model from hardcode to argument
+              # TODO: Change model from hardcode to argument
             # Reserve 1000 tokens for the response
 
             logger.debug(f"Token limit: {token_limit}")
-            send_token_limit = token_limit - 1000
+            send_token_limit = (token_limit * 3) / 4  # e.g. 1000 tokens for a 4k model, 2000 tokens for 8k, 4000 tokens for 32k
 
             relevant_memory = (
                 ""
@@ -96,8 +96,8 @@ def chat_with_ai(
                 current_context,
             ) = generate_context(prompt, relevant_memory, full_message_history, model)
 
-            while current_tokens_used > 2500:
-                # remove memories until we are under 2500 tokens
+            while current_tokens_used > (send_token_limit-500):
+                # remove memories until we are under 2500 ßtokens
                 relevant_memory = relevant_memory[:-1]
                 (
                     next_message_to_add_index,

@@ -21,6 +21,7 @@ import click
     type=int,
     help="Defines the number of times to run in continuous mode",
 )
+@click.option("--continue-session", is_flag=True, help="Continue previous session with memory")
 @click.option("--speak", is_flag=True, help="Enable Speak Mode")
 @click.option("--debug", is_flag=True, help="Enable Debug Mode")
 @click.option("--gpt3only", is_flag=True, help="Enable GPT3.5 Only Mode")
@@ -77,6 +78,7 @@ def main(
     skip_news: bool,
     workspace_directory: str,
     install_plugin_deps: bool,
+    continue_session: bool,
 ) -> None:
     """
     Welcome to AutoGPT an experimental open-source application showcasing the capabilities of the GPT-4 pushing the boundaries of AI.
@@ -102,6 +104,7 @@ def main(
             skip_news,
             workspace_directory,
             install_plugin_deps,
+            continue_session
         )
 
 

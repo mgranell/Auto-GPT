@@ -11,7 +11,7 @@
                 "criticism": {"type": "string"},
                 "speak": {"type": "string"}
             },
-            "required": ["text", "reasoning", "plan", "criticism", "speak"],
+            "required": ["text", "reasoning", "plan", "criticism"],
             "additionalProperties": false
         },
         "command": {

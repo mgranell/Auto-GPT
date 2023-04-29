@@ -1,5 +1,6 @@
 """The application entry point.  Can be invoked by a CLI or any other front end application."""
 import logging
+import pickle
 import sys
 from pathlib import Path
 
@@ -33,6 +34,7 @@ def run_auto_gpt(
     skip_news: bool,
     workspace_directory: str,
     install_plugin_deps: bool,
+    continue_session: bool,
 ):
     # Configure logging before we do anything else.
     logger.set_level(logging.DEBUG if debug else logging.INFO)
@@ -131,7 +133,11 @@ def run_auto_gpt(
     )
     # Initialize memory and make sure it is empty.
     # this is particularly important for indexing and referencing pinecone memory
-    memory = get_memory(cfg, init=True)
+    if (continue_session):
+        with open(f"{workspace_directory}/full_message_history.pkl","rb") as f:
+            full_message_history = pickle.load(f)
+
+    memory = get_memory(cfg, init=(not continue_session))
     logger.typewriter_log(
         "Using memory of type:", Fore.GREEN, f"{memory.__class__.__name__}"
     )
